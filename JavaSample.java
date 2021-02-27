@@ -3,13 +3,22 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import javafx.application.*;
+import javafx.event.*;
+import javafx.scene.*;
+import javafx.scene.media.*;
+import javafx.scene.web.*;
+import javafx.stage.*;
+
 import java.nio.file.*;
 
-public class JavaSample {
+public class JavaSample extends Application {
     public static void main(String[] args) {
         startAWT();
 
         SwingUtilities.invokeLater(JavaSample::startSwing);
+
+        launch(args);
     }
 
     private static void startAWT() {
@@ -48,5 +57,64 @@ public class JavaSample {
         frame.getContentPane().add(button);
  
         frame.setVisible(true);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        showWebView();
+
+        primaryStage.setTitle("Hello, JavaFX!");
+
+        final javafx.scene.control.Button button
+            = new javafx.scene.control.Button();
+
+        button.setText("Hello, JavaFX!");
+        button.setOnAction(event -> {
+                button.setText("Button clicked!");
+
+                showMedia();
+            });
+
+        primaryStage.setScene(new Scene(button, 300, 300));
+
+        primaryStage.show();
+    }
+
+    private void showMedia() {
+        Stage stage = new Stage();
+
+        // https://peach.blender.org/download/
+        Path path = FileSystems.getDefault()
+            .getPath("BigBuckBunny_320x180.mp4");
+        Media media = new Media(path.toUri().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+
+        mediaPlayer.setAutoPlay(true);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+
+        MediaView mediaView = new MediaView(mediaPlayer);
+        Group root = new Group();
+
+        root.getChildren().add(mediaView);
+
+        Scene scene = new Scene(root, 320, 180);
+
+        stage.setScene(scene);
+
+        stage.show();
+    }
+
+    private void showWebView() {
+        Stage stage = new Stage();
+
+        stage.setTitle("WebView");
+
+        WebView webView = new WebView();
+
+        webView.getEngine().load("https://openjfx.io/");
+
+        stage.setScene(new Scene(webView, 640, 480));
+
+        stage.show();
     }
 }
